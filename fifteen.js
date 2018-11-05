@@ -118,7 +118,7 @@ window.onload = () =>{
         background2 = $("<img name = 'background2.jpg' src ='background2.jpg' height=95px width=95px)><img>");
         background3 = $("<img name = 'background3.jpg' src ='background3.jpg' height=95px width=95px)><img>");
         background4 = $("<img name = 'background4.jpg' src ='background4.jpg' height=95px width=95px)><img>");
-        infoBar   = $("<div>Click Picture to select Puzzle Background</div>");
+        infoBar   = $("<div>click a picture to get a different background</div>");
     
         
         menu.append(background1);
