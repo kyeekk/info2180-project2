@@ -1,219 +1,86 @@
-$(document).ready(function(){
-	
-	//Image Selector
-	menu    = $("<div></div>");
-	background1 = $("<img name = 'background1.jpg' src ='background1.jpg' height=95px width=95px)><img>");
-	background2 = $("<img name = 'background2.jpg' src ='background2.jpg' height=95px width=95px)><img>");
-	background3 = $("<img name = 'background3.jpg' src ='background3.jpg' height=95px width=95px)><img>");
-	background4 = $("<img name = 'background4.jpg' src ='background4.jpg' height=95px width=95px)><img>");
-	infoBar   = $("<div>Click Picture to select Puzzle Background</div>");
+window.onload = () =>{
 
-	
-	menu.append(background1);
-	menu.append(background2);
-	menu.append(background3);
-	menu.append(background4);
-	menu.append(infoBar);
+    const puzzle = document.getElementById("puzzlearea");
+    let puzzlepiece = document.querySelectorAll("#puzzlearea div");
+    const shuffle = document.getElementById("shufflebutton");
+    const blank = [300,300];
 
-	//Image Selector CSS/Style
-	menu.css({
-		"width": "250px",
-		"height": "250px",
-		"position": "absolute",
-		"top": "200px",
-		"left" : "1050px"
-	});
+    setupPuzzle(4, puzzlepiece);
 
-	infoBar.css({
-		"background-color": "#00B2EE",
-		"width": "196px",
-		"font-size" : "1.25em",
-		"text-align": "center",
-		"color": "white",
-		"border": "1.5px solid #000000"
-	});
+    shuffle.addEventListener("click", shuffleGame);
 
-	background1.css({
-		"margin": "2px",
-		"margin-bottom": "1.0px"
-	});
+    function shuffleGame(){
+        function swapPiece(piece1, piece2) {
+            temp = piece1.style.left;
+            piece1.style.left = piece2.style.left;
+            piece2.style.left = temp;
+      
+            temp = piece1.style.top;
+            piece1.style.top = piece2.style.top;
+            piece2.style.top = temp;
+          }
+          for (let i = 0; i < 100; i++) {
+            direction = Math.floor(Math.random()) == 1 ? "left" : "top";
+            swapPiece(
+              pieces[Math.floor(Math.random() * pieces.length)],
+              pieces[Math.floor(Math.random() * pieces.length)]
+            );
+        }
+    }
 
-	background2.css({
-		"margin": "2px"
-	});
+    function setupPuzzle(x, puzzlepiece) {
+        puzzlepiece.forEach((piece, i) => {
+            // grid layout
+            piece.classList.add("puzzlepiece");
+            //piece.classList.add("movablepiece");
+            piece.style.left = `${(i % x) * 100}px`;
+            piece.style.top = `${parseInt(i / x) * 100}px`;
+            bgPos = `-${piece.style.left} -${piece.style.top}`;
+            piece.style.backgroundPosition = bgPos;
 
-	background3.css({
-		"margin": "2px"
-	});
+            piece.addEventListener("mouseover", canMove);
+            piece.addEventListener("click", movePiece);
+            piece.addEventListener("mouseout", function() {
+                this.classList.remove("movablepiece");
+            });
+        });
+    }
 
-	background4.css({
-		"margin": "2px",
-		"margin-bottom": "1.0px"
-	});
+    function canMove(){
+        if ( moveHorizontal(this) || moveVertical(this)){
+            this.classList.add("movablepiece");
+        }
+    }
 
-	//Adds Image Selector to Body
-	$('body').append(menu);
+    function movePiece(){
+        if (moveHorizontal(this)){
+            place = parseInt(this.style.left);
+            this.style.left = `${blank[0]}px`;
+            blank[0] = place;
+        }
+        if (moveVertical(this)){
+            place = parseInt(this.style.top);
+            this.style.top = `${blank[1]}px`;
+            blank[1] = place;
+        }
+    }
 
-	occupiedLocations = [];
-	allLocations      = [];
-	images            = [background1,background2,background3,background4];
-	puzzlePieces      = Array.from($("#puzzlearea").children());
+    function moveHorizontal(piece){
+        if (parseInt(piece.style.top) == blank[1]){
+            if(parseInt(piece.style.left) - blank[0] == 100 || 
+            parseInt(piece.style.left) - blank[0] == -100){
+                return true
+            }
+        }
+    }
 
-	
-	images.forEach(function(img){
-		img[0].addEventListener("click",function(){
-			changeBackground(img[0]);
-		});
-	});
+    function moveVertical(piece){
+        if (parseInt(piece.style.left) == blank[0]){
+            if(parseInt(piece.style.top) - blank[1] == 100 || 
+            parseInt(piece.style.top) - blank[1] == -100){
+                return true
+            }
+        }
+    }
 
-	
-	//Sort and Adjust Background Image
-	for(i=0;i<4;i++){
-			for (j=0;j<4;j++){
-				allLocations.push([i*100,j*100]);
-		}
-	}
-	for (i=0;i<puzzlePieces.length;i++){
-		puzzlePieces[i].classList.add("puzzlepiece");
-	}
-	for (i=0;i<4;i++){
-		puzzlePieces[i].style.top                = "0px";
-		puzzlePieces[i].style.left               = `${100*i}px`;
-		puzzlePieces[i].style.backgroundPosition = `${-100*i}px 0px`;
-	}
-	for (i=4;i<8;i++){
-		puzzlePieces[i].style.top                = "100px";
-		puzzlePieces[i].style.left               = `${100*(i%4)}px`;
-		puzzlePieces[i].style.backgroundPosition = ` ${-100*(i%4)}px -100px`
-	}
-	for (i=8;i<12;i++){
-		puzzlePieces[i].style.top                = "200px";
-		puzzlePieces[i].style.left               = `${100*(i%4)}px`;
-		puzzlePieces[i].style.backgroundPosition = `${-100*(i%4)}px -200px`
-	}
-	for (i=12;i<15;i++){
-		puzzlePieces[i].style.top                = "300px";
-		puzzlePieces[i].style.left               = `${100*(i%4)}px`;
-		puzzlePieces[i].style.backgroundPosition = `${-100*(i%4)}px -300px`
-	}
-
-	//Movable Piece
-	$(".puzzlepiece").hover(
-		function(){
-			if(movablePiece(this)){
-				$(this).addClass("movablepiece");
-			}
-		},
-		function(){
-			$(this).removeClass("movablepiece");
-		});
-
-	$(".puzzlepiece").click(function(){
-		if(movablePiece(this)){
-			moveToEmptyTile(this);
-		}
-	});	
-
-	$("#shufflebutton").click(shuffle);
-
-	function puzzlePieceLocation(puzzlepiece){
-		return [parseInt(puzzlepiece.style.left),parseInt(puzzlepiece.style.top)];
-	}
-
-	function changePuzzlePieceLocation(puzzlepiece, left, top){
-		puzzlepiece.style.left = `${left}px`;
-		puzzlepiece.style.top  = `${top}px`;
-	}
-
-	function equalArrays(array1,array2){
-		return array1[0]===array2[0] && array1[1]===array2[1]
-	}
-
-	function containsElement(array, element){
-		for(i=0;i<array.length;i++){
-			if (equalArrays(array[i],element)){
-				return true;
-			}
-		}return false;
-	}
-
-	function locateEmptyTile() {
-		let emptyTile;
-		occupiedLocations = puzzlePieces.map(function(puzzlepiece){
-			return puzzlePieceLocation(puzzlepiece);
-		})
-		allLocations.forEach(function(location){
-    		if(!(containsElement(occupiedLocations,location))){
-    			emptyTile = location;
-    		}
-		})
-		return emptyTile;
-	}
-
-	function moveToEmptyTile(puzzlepiece){
-		let pieceLocation;
-
-		emptyTileLocation = locateEmptyTile();
-		pieceLocation     = puzzlePieceLocation(puzzlepiece);	
-		//Swap location of empty tile and moving tile
-		temp              = emptyTileLocation;
-		emptyTileLocation = pieceLocation;
-		pieceLocation     = temp;
-
-		changePuzzlePieceLocation(puzzlepiece, pieceLocation[0],pieceLocation[1]);
-	}
-
-
-	function adjacentLocations(location1, location2){
-		[left1,top1]  = location1;
-		[left2,top2]  = location2;
-
-		if(left1 === left2 && top1 === top2 + 100){
-			return true;
-		}
-		if(left1 === left2 && top1 === top2 - 100){
-			return true;
-		}
-		if(top1   === top2 && left1 === left2 - 100){
-			return true;
-		}
-		if(top1   === top2 && left1 === left2 + 100){
-			return true;
-		}
-		return false;
-	}
-
-
-	function movablePiece(puzzlepiece){
-		return adjacentLocations(puzzlePieceLocation(puzzlepiece),locateEmptyTile())
-	}
-
-	function shuffle(){
-		[...Array(160).keys()].forEach(function(){
-			neighbours = puzzlePieces.filter(function(puzzlepiece){
-			return movablePiece(puzzlepiece);
-		})
-			randomPuzzlePiece = neighbours[Math.floor(Math.random() * (neighbours.length))]
-			moveToEmptyTile(randomPuzzlePiece);
-		})
-	}
-
-	function changeImage(img){
-		$("#puzzlepiece").backgroundImage = img;
-	}
-
-	function selectRandomBackground(){
-		r = Math.floor(Math.random()*images.length)
-		puzzlePieces.forEach(function(puzzlepiece){
-			puzzlepiece.style.backgroundImage = "url('" +  images[r][0].name + "')";
-		})
-	}
-
-	function changeBackground(img){
-		puzzlePieces.forEach(function(puzzlepiece){
-			puzzlepiece.style.backgroundImage = "url('" +  img.name + "')";
-		})
-	}
-
-	selectRandomBackground();
-})
+}
