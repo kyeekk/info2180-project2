@@ -77,22 +77,6 @@ window.onload = () =>{
     shuffle.addEventListener("click", shuffleGame);
 
     function shuffleGame(){
-        //swap a random tile with the blank
-        /*function swap(p1, blank){
-            place = p1.style.left;
-            p1.style.left = blank[0];
-            blank[0] = place;
-
-            place = p1.style.top;
-            p1.style.top = blank[1];
-            blank[1] = p1.style.top;
-        }
-        swap(
-            puzzlepiece[Math.floor((Math.random) * boardPos.length) + 1],
-            blank
-        );*/
-
-        //swap(puzzlepiece, blank);
        function swap(p1, p2) {
             place = p1.style.left;
             p1.style.left = p2.style.left;
