@@ -1,3 +1,5 @@
+//extra feauture multiple backgrounds
+
 window.onload = () =>{
 
     // all possible board positions
@@ -76,8 +78,8 @@ window.onload = () =>{
 
     function shuffleGame(){
         //swap a random tile with the blank
-        function swap(p1, blank){
-            place = - p1.style.left;
+        /*function swap(p1, blank){
+            place = p1.style.left;
             p1.style.left = blank[0];
             blank[0] = place;
 
@@ -85,11 +87,13 @@ window.onload = () =>{
             p1.style.top = blank[1];
             blank[1] = p1.style.top;
         }
-        puzzlepiece.forEach(p => {
-            swap(p,blank);
-        })
+        swap(
+            puzzlepiece[Math.floor((Math.random) * boardPos.length) + 1],
+            blank
+        );*/
+
         //swap(puzzlepiece, blank);
-       /* function swap(p1, p2) {
+       function swap(p1, p2) {
             place = p1.style.left;
             p1.style.left = p2.style.left;
             p2.style.left = place;
@@ -103,7 +107,127 @@ window.onload = () =>{
               puzzlepiece[Math.floor(Math.random() * boardPos.length)],
               puzzlepiece[Math.floor(Math.random() * boardPos.length)]
             );
-          } */      
+          }      
     }
+
+    $(document).ready(function(){
+	
+        //Image Selector
+        menu    = $("<div></div>");
+        background1 = $("<img name = 'background.jpg' src ='background.jpg' height=95px width=95px)><img>");
+        background2 = $("<img name = 'background2.jpg' src ='background2.jpg' height=95px width=95px)><img>");
+        background3 = $("<img name = 'background3.jpg' src ='background3.jpg' height=95px width=95px)><img>");
+        background4 = $("<img name = 'background4.jpg' src ='background4.jpg' height=95px width=95px)><img>");
+        infoBar   = $("<div>Click Picture to select Puzzle Background</div>");
+    
+        
+        menu.append(background1);
+        menu.append(background2);
+        menu.append(background3);
+        menu.append(background4);
+        menu.append(infoBar);
+    
+        //Image Selector CSS/Style
+        menu.css({
+            "width": "250px",
+            "height": "250px",
+            "position": "absolute",
+            "top": "200px",
+            "left" : "1050px"
+        });
+    
+        infoBar.css({
+            "background-color": "#00B2EE",
+            "width": "196px",
+            "font-size" : "1.25em",
+            "text-align": "center",
+            "color": "white",
+            "border": "1.5px solid #000000"
+        });
+    
+        background1.css({
+            "margin": "2px",
+            "margin-bottom": "1.0px"
+        });
+    
+        background2.css({
+            "margin": "2px"
+        });
+    
+        background3.css({
+            "margin": "2px"
+        });
+    
+        background4.css({
+            "margin": "2px",
+            "margin-bottom": "1.0px"
+        });
+    
+        //Adds Image Selector to Body
+        $('body').append(menu);
+    
+        occupiedLocations = [];
+        allLocations      = [];
+        images            = [background1,background2,background3,background4];
+        puzzlePieces      = Array.from($("#puzzlearea").children());
+    
+        
+        images.forEach(function(img){
+            img[0].addEventListener("click",function(){
+                changeBackground(img[0]);
+            });
+        });
+    
+        
+        //Sort and Adjust Background Image
+        for(i=0;i<4;i++){
+                for (j=0;j<4;j++){
+                    allLocations.push([i*100,j*100]);
+            }
+        }
+        for (i=0;i<puzzlePieces.length;i++){
+            puzzlePieces[i].classList.add("puzzlepiece");
+        }
+        for (i=0;i<4;i++){
+            puzzlePieces[i].style.top                = "0px";
+            puzzlePieces[i].style.left               = `${100*i}px`;
+            puzzlePieces[i].style.backgroundPosition = `${-100*i}px 0px`;
+        }
+        for (i=4;i<8;i++){
+            puzzlePieces[i].style.top                = "100px";
+            puzzlePieces[i].style.left               = `${100*(i%4)}px`;
+            puzzlePieces[i].style.backgroundPosition = ` ${-100*(i%4)}px -100px`
+        }
+        for (i=8;i<12;i++){
+            puzzlePieces[i].style.top                = "200px";
+            puzzlePieces[i].style.left               = `${100*(i%4)}px`;
+            puzzlePieces[i].style.backgroundPosition = `${-100*(i%4)}px -200px`
+        }
+        for (i=12;i<15;i++){
+            puzzlePieces[i].style.top                = "300px";
+            puzzlePieces[i].style.left               = `${100*(i%4)}px`;
+            puzzlePieces[i].style.backgroundPosition = `${-100*(i%4)}px -300px`
+        }
+
+        function changeImage(img){
+		$("#puzzlepiece").backgroundImage = img;
+	}
+
+	function selectRandomBackground(){
+		r = Math.floor(Math.random()*images.length)
+		puzzlePieces.forEach(function(puzzlepiece){
+			puzzlepiece.style.backgroundImage = "url('" +  images[r][0].name + "')";
+		})
+	}
+
+	function changeBackground(img){
+		puzzlePieces.forEach(function(puzzlepiece){
+			puzzlepiece.style.backgroundImage = "url('" +  img.name + "')";
+		})
+	}
+
+	selectRandomBackground();
+    
+    })
 
 }
