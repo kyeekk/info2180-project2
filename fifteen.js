@@ -1,32 +1,16 @@
 window.onload = () =>{
 
-    const puzzle = document.getElementById("puzzlearea");
+    // all possible board positions
+    boardPos=[[0,0],[0,100],[0,200],[0,300],[100,0],[100,100],[100,200],[100,300],
+    [200,0],[200,100],[200,200],[200,300],[300,0],[300,100],[300,200],[300,300]];
+
+    //const puzzle = document.getElementById("puzzlearea");
     let puzzlepiece = document.querySelectorAll("#puzzlearea div");
     const shuffle = document.getElementById("shufflebutton");
     const blank = [300,300];
 
+    //set up grid and background on tiles
     setupPuzzle(4, puzzlepiece);
-
-    shuffle.addEventListener("click", shuffleGame);
-
-    function shuffleGame(){
-        function swapPiece(piece1, piece2) {
-            temp = piece1.style.left;
-            piece1.style.left = piece2.style.left;
-            piece2.style.left = temp;
-      
-            temp = piece1.style.top;
-            piece1.style.top = piece2.style.top;
-            piece2.style.top = temp;
-          }
-          for (let i = 0; i < 100; i++) {
-            direction = Math.floor(Math.random()) == 1 ? "left" : "top";
-            swapPiece(
-              pieces[Math.floor(Math.random() * pieces.length)],
-              pieces[Math.floor(Math.random() * pieces.length)]
-            );
-        }
-    }
 
     function setupPuzzle(x, puzzlepiece) {
         puzzlepiece.forEach((piece, i) => {
@@ -46,12 +30,14 @@ window.onload = () =>{
         });
     }
 
+    //checks if a tile can move at all and adds the hovering class
     function canMove(){
         if ( moveHorizontal(this) || moveVertical(this)){
             this.classList.add("movablepiece");
         }
     }
 
+    //moves tiles
     function movePiece(){
         if (moveHorizontal(this)){
             place = parseInt(this.style.left);
@@ -65,6 +51,7 @@ window.onload = () =>{
         }
     }
 
+    //checks if tile can move on  the horizontal axis
     function moveHorizontal(piece){
         if (parseInt(piece.style.top) == blank[1]){
             if(parseInt(piece.style.left) - blank[0] == 100 || 
@@ -74,6 +61,7 @@ window.onload = () =>{
         }
     }
 
+    //checks if tile can move on the vertical axis
     function moveVertical(piece){
         if (parseInt(piece.style.left) == blank[0]){
             if(parseInt(piece.style.top) - blank[1] == 100 || 
@@ -81,6 +69,41 @@ window.onload = () =>{
                 return true
             }
         }
+    }
+
+    //shuffles tiles on board
+    shuffle.addEventListener("click", shuffleGame);
+
+    function shuffleGame(){
+        //swap a random tile with the blank
+        function swap(p1, blank){
+            place = - p1.style.left;
+            p1.style.left = blank[0];
+            blank[0] = place;
+
+            place = p1.style.top;
+            p1.style.top = blank[1];
+            blank[1] = p1.style.top;
+        }
+        puzzlepiece.forEach(p => {
+            swap(p,blank);
+        })
+        //swap(puzzlepiece, blank);
+       /* function swap(p1, p2) {
+            place = p1.style.left;
+            p1.style.left = p2.style.left;
+            p2.style.left = place;
+        
+            place = p1.style.top;
+            p1.style.top = p2.style.top;
+            p2.style.top = place;
+          }
+          for (let i = 0; i <= boardPos.length; i++) {
+            swap(
+              puzzlepiece[Math.floor(Math.random() * boardPos.length)],
+              puzzlepiece[Math.floor(Math.random() * boardPos.length)]
+            );
+          } */      
     }
 
 }
